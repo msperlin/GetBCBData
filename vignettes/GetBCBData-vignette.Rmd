@@ -1,0 +1,56 @@
+---
+title: "Using GetBCBData to fetch time series from BCB-BGS"
+author: "Marcelo Perlin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to use GetBCBData}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Motivation
+
+The Central Bank of Brazil (BCB) offers access to its SGS system (sistema de series temporais) with a official API available available [here]().
+
+Package GetBCB offers a R interface to the API and many other advantages:
+
+- Use of a caching system to speed up repeated requests of datasets
+- User can utilize all cores of the machine (parallel computing) when fetching a large batch of time series
+- Error handling internally. Even if requested series does not exist, the function will still return a result
+
+## A simple example
+
+
+Let's have a look at interest rates in Brazil, specifically SELIC and CDI. After searching in the [SGS system](http://www.bcb.gov.br/?sgs), we find that their respective id codes are 4392 and 1178. 
+
+Now, lets download the data with `GetBCBData`:
+
+```{r, message=FALSE}
+library(GetBCBData)
+library(tidyverse)
+
+my.id <- c('CDI' = 4392,
+           'SELIC' = 1178)
+
+df.bcb <- gbcbd_get_series(id = my.id ,
+                       first.date = '2010-01-01',
+                       last.date = Sys.Date(),
+                       format.data = 'long',
+                       #series.name = 'ABC',
+                       use.memoise = TRUE, 
+                       cache.path = tempdir(), # use tempdir for cache folder
+                       do.parallel = FALSE)
+
+glimpse(df.bcb)
+
+p <- ggplot(df.bcb, aes(x = ref.date, y = value, 
+                    color = series.name)) +
+  geom_line() + 
+  labs(title = 'Interest Rates in Brazil', 
+       subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
+       x = '', y = 'Percentage*100')
+
+print(p)
+
+```
