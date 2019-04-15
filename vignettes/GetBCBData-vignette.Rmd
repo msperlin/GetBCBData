@@ -11,18 +11,17 @@ vignette: >
 
 ## Motivation
 
-The Central Bank of Brazil (BCB) offers access to its SGS system (sistema de series temporais) with a official API available available [here]().
+The Central Bank of Brazil (BCB) offers access to its SGS system (sistema de series temporais) with a official API available available [here](http://www.bcb.gov.br/?sgs).
 
 Package GetBCB offers a R interface to the API and many other advantages:
 
-- Use of a caching system to speed up repeated requests of datasets
-- User can utilize all cores of the machine (parallel computing) when fetching a large batch of time series
-- Error handling internally. Even if requested series does not exist, the function will still return a result
+- Use of a caching system with package `memoise` to speed up repeated requests of data;
+- User can utilize all cores of the machine (parallel computing) when fetching a large batch of time series;
+- Error handling internally. Even if requested series does not exist, the function will still return all results.
 
 ## A simple example
 
-
-Let's have a look at interest rates in Brazil, specifically SELIC and CDI. After searching in the [SGS system](http://www.bcb.gov.br/?sgs), we find that their respective id codes are 4392 and 1178. 
+Let's have a look at unemployment rates around the world. After searching for the ids in the [SGS system](http://www.bcb.gov.br/?sgs), we find the ids for 6 countries and set it as input `id`. 
 
 Now, lets download the data with `GetBCBData`:
 
@@ -30,11 +29,15 @@ Now, lets download the data with `GetBCBData`:
 library(GetBCBData)
 library(tidyverse)
 
-my.id <- c('CDI' = 4392,
-           'SELIC' = 1178)
+my.countries <- c('Germany', 'Canada', 'USA', 
+                  'France', 'Italy', 'Japan')
 
-df.bcb <- gbcbd_get_series(id = my.id ,
-                       first.date = '2010-01-01',
+my.ids <- c(3785:3790)
+
+names(my.ids) <- paste0('Unemp. rate - ', my.countries)
+
+df.bcb <- gbcbd_get_series(id = my.ids ,
+                       first.date = '2000-01-01',
                        last.date = Sys.Date(),
                        format.data = 'long',
                        #series.name = 'ABC',
@@ -44,12 +47,12 @@ df.bcb <- gbcbd_get_series(id = my.id ,
 
 glimpse(df.bcb)
 
-p <- ggplot(df.bcb, aes(x = ref.date, y = value, 
-                    color = series.name)) +
+p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
   geom_line() + 
-  labs(title = 'Interest Rates in Brazil', 
+  labs(title = 'Unemploymnent Rates Around the World', 
        subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
-       x = '', y = 'Percentage*100')
+       x = '', y = 'Percentage*100') + facet_wrap(~series.name)
+  
 
 print(p)
 
