@@ -12,6 +12,9 @@ gbcbd_get_JSON_fct(use.memoise = TRUE,
 
 \item{cache.path}{Path to save cache files - 'rbcb2_cache' (default)}
 }
+\value{
+A JSON function that will use cache or not
+}
 \description{
 Internal use. Simply switches a function given a choice for using memoise.
 }

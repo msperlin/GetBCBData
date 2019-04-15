@@ -37,7 +37,7 @@ gbcbd_get_default_cache_folder <- function() {
 #' Internal use. Simply switches a function given a choice for using memoise.
 #'
 #' @inheritParams gbcbd_get_series
-#' @return
+#' @return A JSON function that will use cache or not
 #' @export
 #'
 #' @examples
