@@ -1,6 +1,6 @@
 Package: GetBCBData
 Type: Package
-Title: Imports Datasets from BCB (Central Bank of Brazil) Using its Official API
+Title: Imports Datasets from BCB (Central Bank of Brazil) using its Official API
 Version: 0.5
 Date: 2019-04-15
 Authors@R: person("Marcelo", "Perlin", email = "marceloperlin@gmail.com", role = c("aut", "cre"))
