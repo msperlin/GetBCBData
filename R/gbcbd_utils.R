@@ -56,3 +56,23 @@ gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
   return(fct_JSON)
 
 }
+
+#' Custom function for printing messages
+#'
+#' @param str.in Message string
+#' @param be.quiet Logical. Should print it or not?
+#'
+#' @return Nothing
+#' @export
+#'
+#' @examples
+#' gbcbd_message('Test', FALSE)
+gbcbd_message <- function(str.in, be.quiet) {
+
+  if (be.quiet) {
+    message('', appendLF = FALSE)
+  } else {
+    message(str.in, appendLF = FALSE)
+  }
+
+}

@@ -5,8 +5,9 @@
 \title{Imports time series data from BCB-SGS System (Banco Central do Brasil, sistema de series temporais)}
 \usage{
 gbcbd_get_series(id, first.date = Sys.Date() - 10 * 365,
-  last.date = Sys.Date(), format.data = "long", use.memoise = TRUE,
-  cache.path = gbcbd_get_default_cache_folder(), do.parallel = FALSE)
+  last.date = Sys.Date(), format.data = "long", be.quiet = FALSE,
+  use.memoise = TRUE, cache.path = gbcbd_get_default_cache_folder(),
+  do.parallel = FALSE)
 }
 \arguments{
 \item{id}{Id of time series. The name of the vector sets the name of the series in the output (e.g i.d <- c('SELIC' = 11)).
@@ -17,6 +18,8 @@ You can search for ids in the official BCB-SGS webpage <http://www.bcb.gov.br/?s
 \item{last.date}{Last date of time series}
 
 \item{format.data}{The format of the datasets - long (default, series incremented by rows) or wide (series incremented by columns)}
+
+\item{be.quiet}{Logical. Should functions output messages to screen? - FALSE (default) or TRUE}
 
 \item{use.memoise}{Logical. Sets the use of caching system - TRUE (default) or FALSE}
 

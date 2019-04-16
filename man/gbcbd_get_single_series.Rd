@@ -6,7 +6,7 @@
 \usage{
 gbcbd_get_single_series(id, series.name = paste0("SGS ", id),
   first.date = Sys.Date() - 360, last.date = Sys.Date(),
-  format.data = "long", use.memoise = TRUE,
+  format.data = "long", be.quiet = FALSE, use.memoise = TRUE,
   cache.path = gbcbd_get_default_cache_folder())
 }
 \arguments{
@@ -19,6 +19,8 @@ gbcbd_get_single_series(id, series.name = paste0("SGS ", id),
 \item{last.date}{Last date of time series}
 
 \item{format.data}{The format of the datasets - long (default, series incremented by rows) or wide (series incremented by columns)}
+
+\item{be.quiet}{Logical. Should functions output messages to screen? - FALSE (default) or TRUE}
 
 \item{use.memoise}{Logical. Sets the use of caching system - TRUE (default) or FALSE}
 

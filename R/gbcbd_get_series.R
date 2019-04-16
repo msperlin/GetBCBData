@@ -8,6 +8,7 @@
 #' @param first.date First date of time series
 #' @param last.date Last date of time series
 #' @param format.data The format of the datasets - long (default, series incremented by rows) or wide (series incremented by columns)
+#' @param be.quiet Logical. Should functions output messages to screen? - FALSE (default) or TRUE
 #' @param use.memoise Logical. Sets the use of caching system - TRUE (default) or FALSE
 #' @param cache.path Path to save cache files - 'rbcb2_cache' (default)
 #' @param do.parallel Logical for parallel data importation - FALSE (default)
@@ -23,6 +24,7 @@ gbcbd_get_series <- function(id,
                              first.date = Sys.Date() - 10*365,
                              last.date = Sys.Date(),
                              format.data = 'long',
+                             be.quiet = FALSE,
                              use.memoise = TRUE,
                              cache.path = gbcbd_get_default_cache_folder(),
                              do.parallel = FALSE) {
@@ -72,6 +74,7 @@ gbcbd_get_series <- function(id,
                   first.date = first.date,
                   last.date = last.date,
                   format.data = format.data,
+                  be.quiet = be.quiet,
                   use.memoise = use.memoise,
                   cache.path = cache.path)
 
@@ -87,9 +90,10 @@ gbcbd_get_series <- function(id,
 
     available.cores <- future::availableCores()
 
-    cat(paste0('\nRunning parallel GetBCBData with ', used.workers, ' cores (',
-               available.cores, ' available)'))
-    cat('\n\n')
+    gbcbd_message(paste0('\nRunning parallel GetBCBData with ', used.workers, ' cores (',
+               available.cores, ' available)',
+               '\n\n'),
+               be.quiet = be.quiet)
 
     # test if plan() was called
     msg <- utils::capture.output(future::plan())
@@ -126,7 +130,7 @@ gbcbd_get_series <- function(id,
 
   }
 
-  cat('\n')
+  gbcbd_message('\n', be.quiet)
 
   return(df.out)
 }
@@ -150,6 +154,7 @@ gbcbd_get_single_series <- function(id,
                                     first.date = Sys.Date()-360,
                                     last.date = Sys.Date(),
                                     format.data = 'long',
+                                    be.quiet = FALSE,
                                     use.memoise = TRUE,
                                     cache.path = gbcbd_get_default_cache_folder()) {
 
@@ -165,15 +170,16 @@ gbcbd_get_single_series <- function(id,
                     format(last.date, '%d/%m/%Y'))
 
 
-  cat(paste0('\nFetching ',
-             series.name, ' [', id, '] ',
-             'from BCB-SGS'))
+  gbcbd_message(paste0('\nFetching ',
+                       series.name, ' [', id, '] ',
+                       'from BCB-SGS'),
+                be.quiet)
 
   if (use.memoise) {
-    cat(' with cache ')
+    gbcbd_message(' with cache ', be.quiet)
   }
   else {
-    cat(' from Online API ')
+    gbcbd_message(' from Online API ', be.quiet)
   }
 
   cache.db = memoise::cache_filesystem(cache.path)
@@ -193,13 +199,14 @@ gbcbd_get_single_series <- function(id,
                          id.num = id,
                          series.name = series.name)
 
-    cat(paste0('\n\t Error in fetching data\n') )
-    cat(paste0('\n\tId ', id, ' does not seem available at BCB-SGS. Check it again at : ',
-               '<http://www.bcb.gov.br/?sgs>') )
+    warning(paste0('\n\t Error in fetching data\n'))
+    warning(paste0('\n\tId ', id, ' does not seem available at BCB-SGS. Check it again at : ',
+               '<http://www.bcb.gov.br/?sgs>'))
     return(df)
 
   } else {
-    cat(paste0('\n\t Found ', nrow(df), ' observations') )
+    gbcbd_message(paste0('\n\t Found ', nrow(df), ' observations'),
+                  be.quiet)
   }
 
 
