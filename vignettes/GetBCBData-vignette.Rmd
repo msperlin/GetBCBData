@@ -27,7 +27,8 @@ Now, lets download the data with `GetBCBData`:
 
 ```{r, message=FALSE}
 library(GetBCBData)
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
 
 my.countries <- c('Germany', 'Canada', 'USA', 
                   'France', 'Italy', 'Japan')

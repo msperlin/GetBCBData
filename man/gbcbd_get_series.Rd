@@ -4,10 +4,16 @@
 \alias{gbcbd_get_series}
 \title{Imports time series data from BCB-SGS System (Banco Central do Brasil, sistema de series temporais)}
 \usage{
-gbcbd_get_series(id, first.date = Sys.Date() - 10 * 365,
-  last.date = Sys.Date(), format.data = "long", be.quiet = FALSE,
-  use.memoise = TRUE, cache.path = gbcbd_get_default_cache_folder(),
-  do.parallel = FALSE)
+gbcbd_get_series(
+  id,
+  first.date = Sys.Date() - 10 * 365,
+  last.date = Sys.Date(),
+  format.data = "long",
+  be.quiet = FALSE,
+  use.memoise = TRUE,
+  cache.path = gbcbd_get_default_cache_folder(),
+  do.parallel = FALSE
+)
 }
 \arguments{
 \item{id}{Id of time series. The name of the vector sets the name of the series in the output (e.g i.d <- c('SELIC' = 11)).
