@@ -48,7 +48,7 @@ gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
 
   if (use.memoise) {
     fct_JSON <- memoise::memoise(f = jsonlite::fromJSON,
-                                 cache = cache.path)
+                                 cache = memoise::cache_filesystem(cache.path))
   } else {
     fct_JSON <- jsonlite::fromJSON
   }
