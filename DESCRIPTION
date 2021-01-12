@@ -1,8 +1,8 @@
 Package: GetBCBData
 Type: Package
 Title: Imports Datasets from BCB (Central Bank of Brazil) using Its Official API
-Version: 0.5
-Date: 2019-04-15
+Version: 0.6
+Date: 2021-01-12
 Authors@R: person("Marcelo", "Perlin", email = "marceloperlin@gmail.com", role = c("aut", "cre"))
 Maintainer: Marcelo Perlin <marceloperlin@gmail.com>
 Description: Downloads and organizes datasets using BCB's API <https://www.bcb.gov.br/>. Offers options for caching with the 'memoise' package and
@@ -14,7 +14,7 @@ License: GPL-2
 BugReports: https://github.com/msperlin/GetBCBData/issues
 URL: https://github.com/msperlin/GetBCBData/
 LazyData: true
-RoxygenNote: 7.0.0
+RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
     testthat,
