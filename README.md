@@ -11,7 +11,7 @@ Package GetBCB offers a R interface to the API and many other advantages:
 ## Installation
 
 ```
-# CRAN (official release) - SOON
+# CRAN (official release)  
 install.packages('GetBCBData')
 
 # Github (dev version)

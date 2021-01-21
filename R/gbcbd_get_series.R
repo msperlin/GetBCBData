@@ -182,7 +182,8 @@ gbcbd_get_single_series <- function(id,
     gbcbd_message(' from Online API ', be.quiet)
   }
 
-  cache.db = memoise::cache_filesystem(cache.path)
+  #cache.db = memoise::cache_filesystem(cache.path)
+  cache.db = cache.path
   fct_JSON <- gbcbd_get_JSON_fct(use.memoise,
                                  cache.db)
 

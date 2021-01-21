@@ -41,7 +41,6 @@ df.bcb <- gbcbd_get_series(id = my.ids ,
                        first.date = '2000-01-01',
                        last.date = Sys.Date(),
                        format.data = 'long',
-                       #series.name = 'ABC',
                        use.memoise = TRUE, 
                        cache.path = tempdir(), # use tempdir for cache folder
                        do.parallel = FALSE)
