@@ -39,5 +39,5 @@ A dataframe for a single series
 This function should not be called directly. Its a helper for gbcbd_get_series
 }
 \examples{
-df <- gbcbd_get_single_series(id = 1)
+df <- gbcbd_get_single_series(id = 1, cache.path = tempdir())
 }

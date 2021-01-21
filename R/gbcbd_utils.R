@@ -42,7 +42,7 @@ gbcbd_get_default_cache_folder <- function() {
 #'
 #' @examples
 #'
-#' fct_get_JSON <- gbcbd_get_JSON_fct()
+#' fct_get_JSON <- gbcbd_get_JSON_fct(cache.path = tempdir())
 gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
                                cache.path = gbcbd_get_default_cache_folder()) {
 

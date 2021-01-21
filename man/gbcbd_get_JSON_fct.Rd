@@ -22,5 +22,5 @@ Internal use. Simply switches a function given a choice for using memoise.
 }
 \examples{
 
-fct_get_JSON <- gbcbd_get_JSON_fct()
+fct_get_JSON <- gbcbd_get_JSON_fct(cache.path = tempdir())
 }

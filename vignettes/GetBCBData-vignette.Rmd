@@ -25,7 +25,7 @@ Let's have a look at unemployment rates around the world. After searching for th
 
 Now, lets download the data with `GetBCBData`:
 
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 library(GetBCBData)
 library(dplyr)
 library(ggplot2)
