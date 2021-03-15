@@ -91,9 +91,9 @@ gbcbd_get_series <- function(id,
     available.cores <- future::availableCores()
 
     gbcbd_message(paste0('\nRunning parallel GetBCBData with ', used.workers, ' cores (',
-               available.cores, ' available)',
-               '\n\n'),
-               be.quiet = be.quiet)
+                         available.cores, ' available)',
+                         '\n\n'),
+                  be.quiet = be.quiet)
 
     # test if plan() was called
     msg <- utils::capture.output(future::plan())
@@ -185,24 +185,24 @@ gbcbd_get_single_series <- function(id,
   #cache.db = memoise::cache_filesystem(cache.path)
   cache.db = cache.path
   fct_JSON <- gbcbd_get_JSON_fct(use.memoise,
-                                 cache.db)
+                                   cache.db)
 
   df <- NULL
   try({
     utils::capture.output(
-    df <- fct_JSON(my.url)
+      df <- fct_JSON(my.url)
     )
   })
 
   if (is.null(df)) {
     df <- dplyr::tibble(ref.date = NA,
-                         value = NA,
-                         id.num = id,
-                         series.name = series.name)
+                        value = NA,
+                        id.num = id,
+                        series.name = series.name)
 
     warning(paste0('\n\t Error in fetching data\n'))
     warning(paste0('\n\tId ', id, ' does not seem available at BCB-SGS. Check it again at : ',
-               '<http://www.bcb.gov.br/?sgs>'))
+                   '<http://www.bcb.gov.br/?sgs>'))
     return(df)
 
   } else {

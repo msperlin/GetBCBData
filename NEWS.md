@@ -1,4 +1,4 @@
-## Version 0.6  (2021-01-21)
+## Version 0.6  (2021-03-15)
 
 - Fixed issue with memoise package
 
