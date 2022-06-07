@@ -1,3 +1,23 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, 
+  results = 'hold',
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/msperlin/GetBCBData/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/msperlin/GetBCBData/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+  
 ## Motivation
 
 The Central Bank of Brazil (BCB) offers access to its SGS system (sistema gerenciador de series temporais) with a official API available [here](http://www.bcb.gov.br/?sgs).
@@ -11,7 +31,7 @@ Package GetBCBData offers a R interface to the API and many other advantages:
 
 ## Installation
 
-```
+```{r, eval=FALSE}
 # CRAN (official release)  
 install.packages('GetBCBData')
 
@@ -21,33 +41,21 @@ devtools::install_github('msperlin/GetBCBData')
 
 ## A simple example
 
-```
+```{r}
 library(GetBCBData)
-library(tidyverse)
+library(ggplot2)
 
-my.countries <- c('Germany', 'Canada', 'USA', 
-                  'France', 'Italy', 'Japan')
+my.id <- c('Selic' = 432)
+df.bcb <- gbcbd_get_series(my.id, cache.path = tempdir())
 
-my.ids <- c(3785:3790)
-
-names(my.ids) <- paste0('Unemp. rate - ', my.countries)
-
-df.bcb <- gbcbd_get_series(id = my.ids ,
-                       first.date = '2000-01-01',
-                       last.date = Sys.Date(),
-                       format.data = 'long',
-                       #series.name = 'ABC',
-                       use.memoise = TRUE, 
-                       cache.path = tempdir(), # use tempdir for cache folder
-                       do.parallel = FALSE)
-
-glimpse(df.bcb)
+head(df.bcb)
 
 p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
   geom_line() + 
-  labs(title = 'Unemploymnent Rates Around the World', 
+  labs(title = 'SELIC', 
        subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
-       x = '', y = 'Percentage*100') + facet_wrap(~series.name)
+       x = 'Time', y = 'Percentage*100') + 
+  theme_light()
   
 
 print(p)
