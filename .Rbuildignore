@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^CRAN-RELEASE$
+^\.github$
+README.Rmd

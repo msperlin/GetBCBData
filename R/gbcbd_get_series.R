@@ -140,15 +140,7 @@ gbcbd_get_series <- function(id,
 #'
 #' This function should not be called directly. Its a helper for gbcbd_get_series
 #'
-#' @inheritParams gbcbd_get_series
-#' @param id Id of series from BCB-SGS
-#' @param series.name Name of time series
-#'
-#' @return A dataframe for a single series
-#' @export
-#'
-#' @examples
-#' df <- gbcbd_get_single_series(id = 1, cache.path = tempdir())
+#'@noRd
 gbcbd_get_single_series <- function(id,
                                     series.name = paste0('SGS ', id),
                                     first.date = Sys.Date()-360,
@@ -189,9 +181,9 @@ gbcbd_get_single_series <- function(id,
 
   df <- NULL
   try({
-    utils::capture.output(
+    utils::capture.output({
       df <- fct_JSON(my.url)
-    )
+    })
   })
 
   if (is.null(df)) {

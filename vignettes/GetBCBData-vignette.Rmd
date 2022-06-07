@@ -1,10 +1,10 @@
 ---
-title: "Using GetBCBData to fetch time series from BCB-BGS"
+title: "Getting Started"
 author: "Marcelo Perlin"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to use GetBCBData}
+  %\VignetteIndexEntry{Getting Started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
