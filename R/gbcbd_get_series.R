@@ -31,12 +31,12 @@ gbcbd_get_series <- function(id,
 
   # check if arguments make sense
   first.date <- as.Date(first.date)
-  if (class(first.date) != 'Date') {
+  if (!methods::is(first.date, 'Date')) {
     stop('Argument first.date is not a valid date!')
   }
 
   last.date <- as.Date(last.date)
-  if (class(last.date) != 'Date') {
+  if (!methods::is(last.date, 'Date')) {
     stop('Argument last.date is not a valid date!')
   }
 

@@ -8,7 +8,8 @@ Description: Downloads and organizes datasets using BCB's API <https://www.bcb.g
     , multicore/multisession with 'furrr' and format of output data (long/wide). 
 Depends:
     R (>= 3.3.0)
-Imports: stringr, utils, curl,dplyr, future, furrr, jsonlite, memoise, purrr
+Imports: stringr, utils, curl,dplyr, future, furrr, jsonlite, memoise, purrr,
+         methods
 License: GPL-2
 BugReports: https://github.com/msperlin/GetBCBData/issues
 URL: https://github.com/msperlin/GetBCBData/
