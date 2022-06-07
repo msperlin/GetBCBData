@@ -79,7 +79,7 @@ test_that("Single series (wide format)", {
   test_df(df.bcb)
 })
 
-test_that("Single series (wide format)", {
+test_that("Single series (long format)", {
 
   my_skip_tests()
 
