@@ -3,3 +3,4 @@
 ^CRAN-RELEASE$
 ^\.github$
 README.Rmd
+^CRAN-SUBMISSION$
