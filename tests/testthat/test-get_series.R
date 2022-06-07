@@ -55,3 +55,40 @@ test_that("Long download", {
 
   test_df(df.bcb)
 })
+
+
+test_that("Multiple Series (with cache)", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432, "NOTSURE" = 1 )
+  df.bcb <- gbcbd_get_series(my.id,
+                             use.memoise = TRUE)
+
+  test_df(df.bcb)
+})
+
+test_that("Single series (wide format)", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432)
+  df.bcb <- gbcbd_get_series(my.id,
+                             format.data = 'wide')
+
+  test_df(df.bcb)
+})
+
+test_that("Single series (wide format)", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432,
+             'other' = 11,
+             'another' = 1839)
+
+  df.bcb <- gbcbd_get_series(my.id,
+                             format.data = 'long')
+
+  test_df(df.bcb)
+})
