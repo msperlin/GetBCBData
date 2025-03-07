@@ -1,6 +1,7 @@
 ## Version 0.8.0  (2025-03-07)
 
 - Fixed bcb url to https
+- fixed  example of main function gbcbd_get_series()
 
 ## Version 0.7.0  (2022-06-07)
 

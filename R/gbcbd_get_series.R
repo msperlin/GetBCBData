@@ -18,8 +18,10 @@
 #'
 #' @examples
 #'
-#' my.id <- c('Taxa de juros - Selic' = 11)
+#' \dontrun{
+#' my.id <- c('Selic Rate' = 11)
 #' df <- gbcbd_get_series(my.id, cache.path = tempdir())
+#' }
 gbcbd_get_series <- function(id,
                              first.date = Sys.Date() - 10*365,
                              last.date = Sys.Date(),

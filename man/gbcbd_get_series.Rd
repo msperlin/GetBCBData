@@ -42,6 +42,8 @@ The main advantage is the use of caching and parallel computing for fast operati
 }
 \examples{
 
-my.id <- c('Taxa de juros - Selic' = 11)
+\dontrun{
+my.id <- c('Selic Rate' = 11)
 df <- gbcbd_get_series(my.id, cache.path = tempdir())
+}
 }
