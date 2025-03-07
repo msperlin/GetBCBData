@@ -150,10 +150,12 @@ gbcbd_get_single_series <- function(id,
                                     use.memoise = TRUE,
                                     cache.path = gbcbd_get_default_cache_folder()) {
 
-  my.url <- sprintf('https://api.bcb.gov.br/dados/serie/bcdata.sgs.%s/dados?formato=json',
-                    id)
+  # old  url
+  #my.url <- sprintf('https://api.bcb.gov.br/dados/serie/bcdata.sgs.%s/dados?formato=json',
+  #                  id)
 
-  my.url <- sprintf(paste0('http://api.bcb.gov.br/dados/serie/bcdata.sgs.',
+  # 20250307: new url (with https)
+  my.url <- sprintf(paste0('https://api.bcb.gov.br/dados/serie/bcdata.sgs.',
                            '%s','/dados?formato=json&',
                            'dataInicial=%s&',
                            'dataFinal=%s'),

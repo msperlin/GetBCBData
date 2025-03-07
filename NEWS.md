@@ -1,3 +1,7 @@
+## Version 0.8.0  (2025-03-07)
+
+- Fixed bcb url to https
+
 ## Version 0.7.0  (2022-06-07)
 
 - Fixed cran notes by removing some of unnecessary packages.
