@@ -10,6 +10,6 @@
     ‘cran-comments.md’
     
 * This is a fix for using https in BCB data api
-* Tlso fixed execution time by removing execution of example at main function gbcbd_get_series()
+* Also fixed execution time by removing execution of example at main function gbcbd_get_series()
 
 

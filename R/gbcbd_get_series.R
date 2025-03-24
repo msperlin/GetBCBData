@@ -156,6 +156,9 @@ gbcbd_get_single_series <- function(id,
   #my.url <- sprintf('https://api.bcb.gov.br/dados/serie/bcdata.sgs.%s/dados?formato=json',
   #                  id)
 
+  # 20250324 - adding sleep between calls
+  Sys.sleep(1.5)
+
   # 20250307: new url (with https)
   my.url <- sprintf(paste0('https://api.bcb.gov.br/dados/serie/bcdata.sgs.',
                            '%s','/dados?formato=json&',
