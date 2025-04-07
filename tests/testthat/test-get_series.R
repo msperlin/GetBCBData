@@ -49,8 +49,10 @@ test_that("Long download", {
 
   my_skip_tests()
 
+  # max is 10 years
   my.id <- c('Selic' = 432)
-  df.bcb <- gbcbd_get_series(my.id, first.date = '1980-01-01',
+  df.bcb <- gbcbd_get_series(my.id,
+                             first.date = Sys.Date() - 10*365,
                              use.memoise = TRUE)
 
   test_df(df.bcb)
