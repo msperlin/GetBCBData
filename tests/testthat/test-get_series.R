@@ -11,6 +11,30 @@ my_skip_tests <- function() {
   skip_on_cran() # too heavy for cran
 }
 
+test_that("sequential strategy (without memoise)", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432)
+  df.bcb <- gbcbd_get_series(my.id,
+                             first.date = Sys.Date() - 15*365,
+                             use.memoise = FALSE)
+
+  test_df(df.bcb)
+})
+
+test_that("sequential strategy (with memoise)", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432)
+  df.bcb <- gbcbd_get_series(my.id,
+                             first.date = '2000-01-01',
+                             use.memoise = TRUE)
+
+  test_df(df.bcb)
+})
+
 test_that("Vanilla call (no cache)", {
 
   my_skip_tests()

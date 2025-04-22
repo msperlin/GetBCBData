@@ -1,7 +1,7 @@
 Package: GetBCBData
 Type: Package
 Title: Imports Datasets from BCB (Central Bank of Brazil) using Its Official API
-Version: 0.8.0
+Version: 0.9.0
 Authors@R: person("Marcelo", "Perlin", email = "marceloperlin@gmail.com", role = c("aut", "cre"))
 Maintainer: Marcelo Perlin <marceloperlin@gmail.com>
 Description: Downloads and organizes datasets using BCB's API <https://www.bcb.gov.br/>. Offers options for caching with the 'memoise' package and

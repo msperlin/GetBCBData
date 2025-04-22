@@ -74,12 +74,12 @@ gbcbd_get_series <- function(id,
   diff_years <- as.numeric(last.date - first.date)/365
 
   if (diff_years >10) {
-    cli::cli_warn(
-      paste0("Since march 2025, the bcb api imposes a restriction of a maximum 10 ",
-      "years of past data. However, this only hold for data with daily frequency.",
-      " If you have asked for a daily series and dont have a return from the request, try ",
-      " adjusting argument first.date. ")
-    )
+    # cli::cli_warn(
+    #   paste0("Since march 2025, the bcb api imposes a restriction of a maximum 10 ",
+    #          "years of past data. However, this only hold for data with daily frequency.",
+    #          " If you have asked for a daily series and dont have a return from the request, try ",
+    #          " adjusting argument first.date. ")
+    # )
   }
 
   #set args
@@ -171,78 +171,49 @@ gbcbd_get_single_series <- function(id,
   # 20250324 - adding sleep between calls
   Sys.sleep(1.5)
 
-  # 20250307: new url (with https)
-  my.url <- sprintf(paste0('https://api.bcb.gov.br/dados/serie/bcdata.sgs.',
-                           '%s','/dados?formato=json&',
-                           'dataInicial=%s&',
-                           'dataFinal=%s'),
-                    id,
-                    format(first.date, '%d/%m/%Y'),
-                    format(last.date, '%d/%m/%Y'))
+  # 20250422 - new system for diff_years > 10
+  diff_years <- as.numeric(last.date - first.date)/365
+  my_interval <- '3 years'
+
+  if (diff_years > 8) {
 
 
-  gbcbd_message(paste0('\nFetching ',
-                       series.name, ' [', id, '] ',
-                       'from BCB-SGS'),
-                be.quiet)
+    vec_dates <- c(seq(first.date, last.date,
+                       by =  my_interval),
+                   last.date)
 
-  if (use.memoise) {
-    gbcbd_message(' with cache ', be.quiet)
-  }
-  else {
-    gbcbd_message(' from Online API ', be.quiet)
-  }
+    cli::cli_alert_info("using sequential data fetching for {length(vec_dates)-1} time periods")
 
-  #cache.db = memoise::cache_filesystem(cache.path)
-  cache.db = cache.path
-  fct_JSON <- gbcbd_get_JSON_fct(use.memoise,
-                                   cache.db)
+    df_all <- dplyr::tibble()
+    for (i_dates in seq(1:(length(vec_dates)-1))) {
 
-  df <- NULL
-  try({
-    utils::capture.output({
-      df <- fct_JSON(my.url)
-    })
-  })
+      first_date_now <- vec_dates[i_dates]
+      last_date_now <- vec_dates[i_dates+1]
 
-  if (is.null(df)) {
-    df <- dplyr::tibble(ref.date = NA,
-                        value = NA,
-                        id.num = id,
-                        series.name = series.name)
+      df_now <- query_api(id, series.name, first_date_now, last_date_now,
+                      format.data,  be.quiet, use.memoise, cache.path)
 
-    warning(paste0('\n\t Error in fetching data\n'))
-    warning(paste0('\n\tId ', id, ' does not seem available at BCB-SGS. Check it again at : ',
-                   '<http://www.bcb.gov.br/?sgs>'))
-    return(df)
+      df_all <- dplyr::bind_rows(
+        df_all,
+        df_now
+      )
+    }
+
+    # make sure it is unique (no overlaps)
+    df_all <- unique(df_all)
+
 
   } else {
-    gbcbd_message(paste0('\n\t Found ', nrow(df), ' observations'),
-                  be.quiet)
+    cli::cli_alert_info("using single call for small query")
+
+    df_all <- query_api(id, series.name, first.date, last.date,
+                    format.data,  be.quiet, use.memoise, cache.path)
   }
 
+  n_rows <- nrow(df_all)
+  n_cols <- ncol(df_all)
+  cli::cli_alert_success("got data with {n_rows} rows and {n_cols} columns")
 
-  df$data <- as.Date(df$data, '%d/%m/%Y')
-  df$valor <- as.numeric(df$valor, '%d/%m/%Y')
-  df$id.num <- id
-  df$series.name <- series.name
-
-  # fix for "no visible global fct definition" msg from CRAN CHECK
-  #data <- valor <- NULL
-  df <- dplyr::rename(df,
-                      'ref.date' = 'data',
-                      'value' = 'valor')
-
-  # change format
-  if (format.data == 'wide') {
-
-    df$id.num <- NULL
-    df$series.name <- NULL
-
-    names(df) <- c('ref.date', series.name)
-  }
-
-  return(df)
+  return(df_all)
 }
-
 

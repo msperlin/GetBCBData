@@ -48,7 +48,7 @@ gbcbd_message <- function(str.in, be.quiet) {
   if (be.quiet) {
     message('', appendLF = FALSE)
   } else {
-    message(str.in, appendLF = FALSE)
+    cli::cli_alert_info(str.in)
   }
 
 }
