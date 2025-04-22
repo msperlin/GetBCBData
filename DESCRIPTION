@@ -9,7 +9,7 @@ Description: Downloads and organizes datasets using BCB's API <https://www.bcb.g
 Depends:
     R (>= 3.3.0)
 Imports: stringr, utils, curl,dplyr, future, furrr, jsonlite, memoise, purrr,
-         methods
+         methods, cli
 License: GPL-2
 BugReports: https://github.com/msperlin/GetBCBData/issues
 URL: https://github.com/msperlin/GetBCBData/

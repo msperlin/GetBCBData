@@ -23,7 +23,7 @@
 #' df <- gbcbd_get_series(my.id, cache.path = tempdir())
 #' }
 gbcbd_get_series <- function(id,
-                             first.date = Sys.Date() - 10*365,
+                             first.date = Sys.Date() - 5*365,
                              last.date = Sys.Date(),
                              format.data = 'long',
                              be.quiet = FALSE,
@@ -69,6 +69,18 @@ gbcbd_get_series <- function(id,
   #                paste0(paste0(failed.ids, ' (', names(failed.ids), ')'), collapse = ', ')),
   #        '\n\n')
   # }
+
+  # 20250412 check if diff year < 10 (api will block otherwise)
+  diff_years <- as.numeric(last.date - first.date)/365
+
+  if (diff_years >10) {
+    cli::cli_warn(
+      paste0("Since march 2025, the bcb api imposes a restriction of a maximum 10 ",
+      "years of past data. However, this only hold for data with daily frequency.",
+      " If you have asked for a daily series and dont have a return from the request, try ",
+      " adjusting argument first.date. ")
+    )
+  }
 
   #set args
   my.args <- list(id = id,

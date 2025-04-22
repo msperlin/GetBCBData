@@ -6,7 +6,7 @@
 \usage{
 gbcbd_get_series(
   id,
-  first.date = Sys.Date() - 10 * 365,
+  first.date = Sys.Date() - 5 * 365,
   last.date = Sys.Date(),
   format.data = "long",
   be.quiet = FALSE,
