@@ -29,7 +29,7 @@ test_that("sequential strategy (with memoise)", {
 
   my.id <- c('Selic' = 432)
   df.bcb <- gbcbd_get_series(my.id,
-                             first.date = '2000-01-01',
+                             first.date = Sys.Date() - 15*365,
                              use.memoise = TRUE)
 
   test_df(df.bcb)
@@ -76,7 +76,7 @@ test_that("Long download", {
   # max is 10 years
   my.id <- c('Selic' = 432)
   df.bcb <- gbcbd_get_series(my.id,
-                             first.date = Sys.Date() - 8*365,
+                             first.date = Sys.Date() - 15*365,
                              use.memoise = TRUE)
 
   test_df(df.bcb)
@@ -94,27 +94,15 @@ test_that("Multiple Series (with cache)", {
   test_df(df.bcb)
 })
 
-test_that("Single series (wide format)", {
-
-  my_skip_tests()
-
-  my.id <- c('Selic' = 432)
-  df.bcb <- gbcbd_get_series(my.id,
-                             format.data = 'wide')
-
-  test_df(df.bcb)
-})
-
-test_that("Single series (long format)", {
+test_that("Wide format", {
 
   my_skip_tests()
 
   my.id <- c('Selic' = 432,
              'other' = 11,
              'another' = 1839)
-
   df.bcb <- gbcbd_get_series(my.id,
-                             format.data = 'long')
+                             format.data = 'wide')
 
   test_df(df.bcb)
 })

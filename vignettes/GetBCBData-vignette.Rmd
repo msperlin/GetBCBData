@@ -21,23 +21,18 @@ Package GetBCBData offers a R interface to the API and many other advantages:
 
 ## A simple example
 
-Let's have a look at unemployment rates around the world. After searching for the ids in the [SGS system](http://www.bcb.gov.br/?sgs), we find the ids for 6 countries and set it as input `id`. 
+Let's have a look at the interest rate in Brazil. After searching for the ids in the [SGS system](http://www.bcb.gov.br/?sgs), we find that the daily SELIC rate is 432. 
 
 Now, lets download the data with `GetBCBData`:
 
-```{r, message=FALSE, eval=FALSE}
+```{r, message=FALSE}
 library(GetBCBData)
 library(dplyr)
 library(ggplot2)
 
-my.countries <- c('Germany', 'Canada', 'USA', 
-                  'France', 'Italy', 'Japan')
+my.id <- c(selic = 432)
 
-my.ids <- c(3785:3790)
-
-names(my.ids) <- paste0('Unemp. rate - ', my.countries)
-
-df.bcb <- gbcbd_get_series(id = my.ids ,
+df.bcb <- gbcbd_get_series(id = my.id ,
                        first.date = '2000-01-01',
                        last.date = Sys.Date(),
                        format.data = 'long',
@@ -47,13 +42,13 @@ df.bcb <- gbcbd_get_series(id = my.ids ,
 
 glimpse(df.bcb)
 
-p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
+p <- ggplot(df.bcb, aes(x = ref.date, y = value/100) ) +
   geom_line() + 
-  labs(title = 'Unemploymnent Rates Around the World', 
+  labs(title = 'Selic Rate', 
        subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
-       x = '', y = 'Percentage*100') + facet_wrap(~series.name)
+       x = '', y = 'Interest Rate') + 
+  theme_light()
   
-
 print(p)
 
 ```
