@@ -21,6 +21,9 @@ gbcbd_get_default_cache_folder <- function() {
   return(name.cache.dir)
 }
 
+# hidden environment for memoization
+.gbcbd_env <- new.env(parent = emptyenv())
+
 #' Function for switching functions depending on using cache or not
 #'
 #' Internal use. Simply switches a function given a choice for using memoise.
@@ -29,12 +32,30 @@ gbcbd_get_default_cache_folder <- function() {
 gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
                                cache.path = gbcbd_get_default_cache_folder()) {
 
-  if (use.memoise) {
-    fct_JSON <- memoise::memoise(f = jsonlite::fromJSON,
-                                 cache = memoise::cache_filesystem(cache.path))
-  } else {
-    fct_JSON <- jsonlite::fromJSON
+  fct_to_use <- function(...) {
+    Sys.sleep(1.5)
+    return(jsonlite::fromJSON(...))
   }
+
+  if (!use.memoise) {
+    return(fct_to_use)
+  }
+
+  # check if memoized function exists in env
+  if (exists("fct_JSON_memoized", envir = .gbcbd_env)) {
+    # check if cache path is the same
+    if (identical(get("cache_path", envir = .gbcbd_env), cache.path)) {
+      return(get("fct_JSON_memoized", envir = .gbcbd_env))
+    }
+  }
+
+  # if not, create it
+  fct_JSON <- memoise::memoise(f = fct_to_use,
+                               cache = memoise::cache_filesystem(cache.path))
+
+  # save it to env
+  assign("fct_JSON_memoized", fct_JSON, envir = .gbcbd_env)
+  assign("cache_path", cache.path, envir = .gbcbd_env)
 
   return(fct_JSON)
 
@@ -45,9 +66,7 @@ gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
 #' @noRd
 gbcbd_message <- function(str.in, be.quiet) {
 
-  if (be.quiet) {
-    message('', appendLF = FALSE)
-  } else {
+  if (!be.quiet) {
     cli::cli_alert_info(str.in)
   }
 

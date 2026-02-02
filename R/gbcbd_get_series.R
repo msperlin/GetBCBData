@@ -31,56 +31,11 @@ gbcbd_get_series <- function(id,
                              cache.path = gbcbd_get_default_cache_folder(),
                              do.parallel = FALSE) {
 
-  # check if arguments make sense
-  first.date <- as.Date(first.date)
-  if (!methods::is(first.date, 'Date')) {
-    stop('Argument first.date is not a valid date!')
-  }
-
-  last.date <- as.Date(last.date)
-  if (!methods::is(last.date, 'Date')) {
-    stop('Argument last.date is not a valid date!')
-  }
-
-  if (last.date < first.date) {
-    stop('It seems that last.date < first.date. Check your inputs.')
-  }
-
-  if (is.null(names(id))) {
-    names(id) <- c(paste0('id = ', id))
-  }
-
-  possible.values <- c('long', 'wide')
-  if (!(format.data %in% possible.values)) {
-    stop(paste0('Input format.data should be "long" or "wide".'))
-  }
-
-  # check if ids exist
-  # REMOVED: Api at https://dadosabertos.bcb.gov.br/ does not contain all data from SGS
-  #
-  # df.series <- gbcbd_get_available_series(use.memoise = use.memoise,
-  #                                         cache.path = cache.path)
-  # flag <- !(id %in% df.series$id.num)
-  #
-  # if (any(flag)) {
-  #   failed.ids <- id[flag]
-  #
-  #   stop(paste0("Can't find the following ids within the BCB-SGS system:\n\n",
-  #                paste0(paste0(failed.ids, ' (', names(failed.ids), ')'), collapse = ', ')),
-  #        '\n\n')
-  # }
-
-  # 20250412 check if diff year < 10 (api will block otherwise)
-  diff_years <- as.numeric(last.date - first.date)/365
-
-  if (diff_years >10) {
-    # cli::cli_warn(
-    #   paste0("Since march 2025, the bcb api imposes a restriction of a maximum 10 ",
-    #          "years of past data. However, this only hold for data with daily frequency.",
-    #          " If you have asked for a daily series and dont have a return from the request, try ",
-    #          " adjusting argument first.date. ")
-    # )
-  }
+  # verify arguments
+  args <- gbcbd_verify_args(id, first.date, last.date, format.data)
+  id <- args$id
+  first.date <- args$first.date
+  last.date <- args$last.date
 
   #set args
   my.args <- list(id = id,
@@ -98,30 +53,7 @@ gbcbd_get_series <- function(id,
                         gbcbd_get_single_series)
   } else {
 
-    # find number of used cores
-    formals.parallel <- formals(future::plan())
-    used.workers <- formals.parallel$workers
-
-    available.cores <- future::availableCores()
-
-    gbcbd_message(paste0('\nRunning parallel GetBCBData with ', used.workers, ' cores (',
-                         available.cores, ' available)',
-                         '\n\n'),
-                  be.quiet = be.quiet)
-
-    # test if plan() was called
-    msg <- utils::capture.output(future::plan())
-
-    flag <- stringr::str_detect(msg[1], 'sequential')
-
-    if (flag) {
-      stop(paste0('When using do.parallel = TRUE, you need to call future::plan() to configure your parallel settings. \n',
-                  'A suggestion, write the following lines:\n\n',
-                  'future::plan(future::multisession, workers = floor(future::availableCores()/2))',
-                  '\n\n',
-                  'The last line should be placed just before calling GetBCBData.\n',
-                  'Notice it will use half of your available cores so that your OS has some room to breathe.'))
-    }
+    gbcbd_setup_parallel(be.quiet)
 
     my.l <- furrr::future_pmap(.l = my.args,
                                gbcbd_get_single_series,
@@ -129,22 +61,11 @@ gbcbd_get_series <- function(id,
   }
 
   # check and change desired format output
-  if (format.data == 'long') {
+  df.out <- gbcbd_format_output(my.l, format.data)
 
-    df.out <- dplyr::bind_rows(my.l)
-
-  } else {
-
-    df.out <- purrr::reduce(my.l,
-                            dplyr::full_join, by = "ref.date")
-
-    # order by date
-    idx <- order(df.out$ref.date)
-    df.out <- df.out[idx, ]
-
+  if (!be.quiet) {
+    cli::cli_alert_success("Finished fetching data. Total rows: {nrow(df.out)}")
   }
-
-  gbcbd_message('\n', be.quiet)
 
   return(df.out)
 }
@@ -163,13 +84,6 @@ gbcbd_get_single_series <- function(id,
                                     be.quiet = FALSE,
                                     use.memoise = TRUE,
                                     cache.path = gbcbd_get_default_cache_folder()) {
-
-  # old  url
-  #my.url <- sprintf('https://api.bcb.gov.br/dados/serie/bcdata.sgs.%s/dados?formato=json',
-  #                  id)
-
-  # 20250324 - adding sleep between calls
-  Sys.sleep(1.5)
 
   # 20250422 - new system for diff_years > 10
   diff_years <- as.numeric(last.date - first.date)/365
@@ -217,3 +131,72 @@ gbcbd_get_single_series <- function(id,
   return(df_all)
 }
 
+#' Verifies arguments for gbcbd_get_series
+#' @noRd
+gbcbd_verify_args <- function(id, first.date, last.date, format.data) {
+  # check if arguments make sense
+  first.date <- as.Date(first.date)
+  if (!inherits(first.date, 'Date')) {
+    stop('Argument first.date is not a valid date!')
+  }
+
+  last.date <- as.Date(last.date)
+  if (!inherits(last.date, 'Date')) {
+    stop('Argument last.date is not a valid date!')
+  }
+
+  if (last.date < first.date) {
+    stop('It seems that last.date < first.date. Check your inputs.')
+  }
+
+  if (is.null(names(id))) {
+    names(id) <- paste0('id = ', id)
+  }
+
+  possible.values <- c('long', 'wide')
+  if (!(format.data %in% possible.values)) {
+    stop(paste0('Input format.data should be "long" or "wide".'))
+  }
+
+  return(list(id = id, first.date = first.date, last.date = last.date))
+}
+
+#' Sets up parallel processing
+#' @noRd
+gbcbd_setup_parallel <- function(be.quiet) {
+  # find number of used cores
+  used.workers <- future::nbrOfWorkers()
+  available.cores <- parallelly::availableCores()
+
+  if (!be.quiet) {
+    cli::cli_alert_info('Running parallel GetBCBData with {used.workers} cores ({available.cores} available)')
+  }
+
+  # test if plan() was called
+  is_sequential <- inherits(future::plan(), "sequential")
+
+  if (is_sequential) {
+    stop(paste0('When using do.parallel = TRUE, you need to call future::plan() to configure your parallel settings. \n',
+                'A suggestion, write the following lines:\n\n',
+                'future::plan(future::multisession, workers = floor(parallelly::availableCores()/2))',
+                '\n\n',
+                'The last line should be placed just before calling GetBCBData.\n',
+                'Notice it will use half of your available cores so that your OS has some room to breathe.'))
+  }
+}
+
+#' Formats output of gbcbd_get_series
+#' @noRd
+gbcbd_format_output <- function(my.l, format.data) {
+  if (format.data == 'long') {
+    df.out <- dplyr::bind_rows(my.l)
+  } else {
+    df.out <- purrr::reduce(my.l,
+                            dplyr::full_join, by = "ref.date")
+
+    # order by date
+    idx <- order(df.out$ref.date)
+    df.out <- df.out[idx, ]
+  }
+  return(df.out)
+}
