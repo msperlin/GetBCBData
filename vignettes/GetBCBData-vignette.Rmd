@@ -30,22 +30,22 @@ library(GetBCBData)
 library(dplyr)
 library(ggplot2)
 
-my.id <- c(selic = 432)
+my_id <- c(selic = 432)
 
-df.bcb <- gbcbd_get_series(id = my.id ,
-                       first.date = '2000-01-01',
-                       last.date = Sys.Date(),
-                       format.data = 'long',
-                       use.memoise = TRUE, 
-                       cache.path = tempdir(), # use tempdir for cache folder
-                       do.parallel = FALSE)
+df_bcb <- gbcbd_get_series(id = my_id ,
+                       first_date = '2000-01-01',
+                       last_date = Sys.Date(),
+                       format_data = 'long',
+                       use_memoise = TRUE, 
+                       cache_path = tempdir(), # use tempdir for cache folder
+                       do_parallel = FALSE)
 
-glimpse(df.bcb)
+glimpse(df_bcb)
 
-p <- ggplot(df.bcb, aes(x = ref.date, y = value/100) ) +
+p <- ggplot(df_bcb, aes(x = ref_date, y = value/100) ) +
   geom_line() + 
   labs(title = 'Selic Rate', 
-       subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
+       subtitle = paste0(min(df_bcb$ref_date), ' to ', max(df_bcb$ref_date)),
        x = '', y = 'Interest Rate') + 
   theme_light()
   

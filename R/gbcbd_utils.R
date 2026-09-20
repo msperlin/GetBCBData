@@ -3,9 +3,9 @@
 #' @noRd
 gbcbd_test_internet <- function() {
   # check for internet
-  test.internet <- curl::has_internet()
+  test_internet <- curl::has_internet()
 
-  if (!test.internet) {
+  if (!test_internet) {
     stop('No internet connection found...')
   }
 }
@@ -16,9 +16,9 @@ gbcbd_test_internet <- function() {
 #'
 #' @noRd
 gbcbd_get_default_cache_folder <- function() {
-  name.cache.dir <- file.path(tempdir(), 'gbcbd_cache')
+  name_cache_dir <- file.path(tempdir(), 'gbcbd_cache')
 
-  return(name.cache.dir)
+  return(name_cache_dir)
 }
 
 # hidden environment for memoization
@@ -29,33 +29,33 @@ gbcbd_get_default_cache_folder <- function() {
 #' Internal use. Simply switches a function given a choice for using memoise.
 #'
 #' @noRd
-gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
-                               cache.path = gbcbd_get_default_cache_folder()) {
+gbcbd_get_JSON_fct <- function(use_memoise = TRUE,
+                               cache_path = gbcbd_get_default_cache_folder()) {
 
   fct_to_use <- function(...) {
     Sys.sleep(1.5)
     return(jsonlite::fromJSON(...))
   }
 
-  if (!use.memoise) {
+  if (!use_memoise) {
     return(fct_to_use)
   }
 
   # check if memoized function exists in env
   if (exists("fct_JSON_memoized", envir = .gbcbd_env)) {
     # check if cache path is the same
-    if (identical(get("cache_path", envir = .gbcbd_env), cache.path)) {
+    if (identical(get("cache_path", envir = .gbcbd_env), cache_path)) {
       return(get("fct_JSON_memoized", envir = .gbcbd_env))
     }
   }
 
   # if not, create it
   fct_JSON <- memoise::memoise(f = fct_to_use,
-                               cache = memoise::cache_filesystem(cache.path))
+                               cache = memoise::cache_filesystem(cache_path))
 
   # save it to env
   assign("fct_JSON_memoized", fct_JSON, envir = .gbcbd_env)
-  assign("cache_path", cache.path, envir = .gbcbd_env)
+  assign("cache_path", cache_path, envir = .gbcbd_env)
 
   return(fct_JSON)
 

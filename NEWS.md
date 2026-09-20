@@ -1,3 +1,10 @@
+## Version 0.9.3  (2026-09-20)
+
+- renamed function arguments and internal variables to snake_case
+- old dot-case argument names (first.date, format.data, etc.) still work as deprecated aliases, with a warning
+- renamed output columns to snake_case: ref_date, id_num and series_name (breaking change)
+- updated documentation, README and vignette
+
 ## Version 0.9.2  (2026-09-20)
 
 - fixed wide format output when a requested series fails (columns are now consistent with successful calls)

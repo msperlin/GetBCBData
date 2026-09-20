@@ -6,32 +6,53 @@
 \usage{
 gbcbd_get_series(
   id,
-  first.date = Sys.Date() - 5 * 365,
-  last.date = Sys.Date(),
-  format.data = "long",
-  be.quiet = FALSE,
-  use.memoise = TRUE,
-  cache.path = gbcbd_get_default_cache_folder(),
-  do.parallel = FALSE
+  first_date = Sys.Date() - 5 * 365,
+  last_date = Sys.Date(),
+  format_data = "long",
+  be_quiet = FALSE,
+  use_memoise = TRUE,
+  cache_path = gbcbd_get_default_cache_folder(),
+  do_parallel = FALSE,
+  first.date = NULL,
+  last.date = NULL,
+  format.data = NULL,
+  be.quiet = NULL,
+  use.memoise = NULL,
+  cache.path = NULL,
+  do.parallel = NULL
 )
 }
 \arguments{
-\item{id}{Id of time series. The name of the vector sets the name of the series in the output (e.g i.d <- c('SELIC' = 11)).
+\item{id}{Id of time series. The name of the vector sets the name of the series in the output (e.g i_d <- c('SELIC' = 11)).
 You can search for ids in the official BCB-SGS webpage <https://www.bcb.gov.br/?sgs>}
 
-\item{first.date}{First date of time series}
+\item{first_date}{First date of time series}
 
-\item{last.date}{Last date of time series}
+\item{last_date}{Last date of time series}
 
-\item{format.data}{The format of the datasets - long (default, series incremented by rows) or wide (series incremented by columns)}
+\item{format_data}{The format of the datasets - long (default, series incremented by rows) or wide (series incremented by columns)}
 
-\item{be.quiet}{Logical. Should functions output messages to screen? - FALSE (default) or TRUE}
+\item{be_quiet}{Logical. Should functions output messages to screen? - FALSE (default) or TRUE}
 
-\item{use.memoise}{Logical. Sets the use of caching system - TRUE (default) or FALSE}
+\item{use_memoise}{Logical. Sets the use of caching system - TRUE (default) or FALSE}
 
-\item{cache.path}{Path to save cache files - 'rbcb2_cache' (default)}
+\item{cache_path}{Path to save cache files - 'gbcbd_cache' (default)}
 
-\item{do.parallel}{Logical for parallel data importation - FALSE (default)}
+\item{do_parallel}{Logical for parallel data importation - FALSE (default)}
+
+\item{first.date}{Deprecated. Use \code{first_date} instead.}
+
+\item{last.date}{Deprecated. Use \code{last_date} instead.}
+
+\item{format.data}{Deprecated. Use \code{format_data} instead.}
+
+\item{be.quiet}{Deprecated. Use \code{be_quiet} instead.}
+
+\item{use.memoise}{Deprecated. Use \code{use_memoise} instead.}
+
+\item{cache.path}{Deprecated. Use \code{cache_path} instead.}
+
+\item{do.parallel}{Deprecated. Use \code{do_parallel} instead.}
 }
 \value{
 A dataframe with requested datasets
@@ -43,7 +64,7 @@ The main advantage is the use of caching and parallel computing for fast operati
 \examples{
 
 \dontrun{
-my.id <- c('Selic Rate' = 11)
-df <- gbcbd_get_series(my.id, cache.path = tempdir())
+my_id <- c('Selic Rate' = 11)
+df <- gbcbd_get_series(my_id, cache_path = tempdir())
 }
 }

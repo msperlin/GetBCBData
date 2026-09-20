@@ -45,15 +45,15 @@ devtools::install_github('msperlin/GetBCBData')
 library(GetBCBData)
 library(ggplot2)
 
-my.id <- c('Selic' = 432)
-df.bcb <- gbcbd_get_series(my.id, cache.path = tempdir())
+my_id <- c('Selic' = 432)
+df_bcb <- gbcbd_get_series(my_id, cache_path = tempdir())
 
-head(df.bcb)
+head(df_bcb)
 
-p <- ggplot(df.bcb, aes(x = ref.date, y = value) ) +
+p <- ggplot(df_bcb, aes(x = ref_date, y = value) ) +
   geom_line() + 
   labs(title = 'SELIC', 
-       subtitle = paste0(min(df.bcb$ref.date), ' to ', max(df.bcb$ref.date)),
+       subtitle = paste0(min(df_bcb$ref_date), ' to ', max(df_bcb$ref_date)),
        x = 'Time', y = 'Percentage*100') + 
   theme_light()
   
