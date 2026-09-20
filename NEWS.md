@@ -1,3 +1,14 @@
+## Version 0.9.2  (2026-09-20)
+
+- fixed wide format output when a requested series fails (columns are now consistent with successful calls)
+- fixed duplicated/zero-length period when the queried date span is a multiple of the sequential interval
+- made the sequential-fetching threshold consistent with the documented 10-year API limit
+- cleaned up query_api retry loop and suppressed HTTP warnings before retrying
+- be.quiet is now respected in the per-series helper; fetch failures are reported instead of a misleading success message
+- strengthened argument validation (id, dates and logical arguments)
+- removed unused 'utils' dependency
+- test suite cleanup (removed duplicated tests, added regression tests)
+
 ## Version 0.9.1  (2026-02-02)
 
 - now using parallelly::availableCores() (fixes #12)

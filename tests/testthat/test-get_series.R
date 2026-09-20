@@ -69,31 +69,6 @@ test_that("Multiple Series (with cache)", {
   test_df(df.bcb)
 })
 
-test_that("Long download", {
-
-  my_skip_tests()
-
-  # max is 10 years
-  my.id <- c('Selic' = 432)
-  df.bcb <- gbcbd_get_series(my.id,
-                             first.date = Sys.Date() - 15*365,
-                             use.memoise = TRUE)
-
-  test_df(df.bcb)
-})
-
-
-test_that("Multiple Series (with cache)", {
-
-  my_skip_tests()
-
-  my.id <- c('Selic' = 432, "NOTSURE" = 1 )
-  df.bcb <- gbcbd_get_series(my.id,
-                             use.memoise = TRUE)
-
-  test_df(df.bcb)
-})
-
 test_that("Wide format", {
 
   my_skip_tests()
@@ -103,6 +78,38 @@ test_that("Wide format", {
              'another' = 1839)
   df.bcb <- gbcbd_get_series(my.id,
                              format.data = 'wide')
+
+  test_df(df.bcb)
+})
+
+test_that("Wide format keeps structure when a series fails", {
+
+  my_skip_tests()
+
+  my.id <- c('Selic' = 432, 'BAD' = 999999)
+  df.bcb <- gbcbd_get_series(my.id,
+                             first.date = Sys.Date() - 30,
+                             last.date = Sys.Date(),
+                             format.data = 'wide',
+                             use.memoise = FALSE)
+
+  expect_equal(names(df.bcb), c('ref.date', 'Selic', 'BAD'))
+  test_df(df.bcb)
+})
+
+test_that("Sequential span that is a multiple of the interval", {
+
+  my_skip_tests()
+
+  # 12 years -> seq(by = '3 years') ends exactly on last.date
+  my.id <- c('Selic' = 432)
+  expect_silent(
+    df.bcb <- gbcbd_get_series(my.id,
+                               first.date = '2010-01-01',
+                               last.date = '2022-01-01',
+                               use.memoise = FALSE,
+                               be.quiet = TRUE)
+  )
 
   test_df(df.bcb)
 })

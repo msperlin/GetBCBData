@@ -34,11 +34,8 @@ query_api <- function(id, series.name, first.date, last.date, format.data,
   df <- NULL
   attempt <- 1
   while (attempt <= max_retries) {
-    try({
-      utils::capture.output({
-        df <- fct_JSON(my.url)
-      })
-    }, silent = TRUE)
+    df <- tryCatch(suppressWarnings(fct_JSON(my.url)),
+                   error = function(e) NULL)
 
     if (!is.null(df)) break
 
@@ -53,10 +50,19 @@ query_api <- function(id, series.name, first.date, last.date, format.data,
   }
 
   if (is.null(df)) {
-    df <- dplyr::tibble(ref.date = as.Date(NA),
-                        value = as.numeric(NA),
-                        id.num = id,
-                        series.name = series.name)
+    # keep the same column structure as a successful call for the requested format
+    if (format.data == 'wide') {
+      df <- dplyr::tibble(ref.date = as.Date(NA))
+      df[[series.name]] <- as.numeric(NA)
+    } else {
+      df <- dplyr::tibble(ref.date = as.Date(NA),
+                          value = as.numeric(NA),
+                          id.num = id,
+                          series.name = series.name)
+    }
+
+    # flag the failure so callers can report it
+    attr(df, 'fetch_failed') <- TRUE
 
     if (!be.quiet) {
       cli::cli_alert_danger("Failed to fetch data for id={id} after {max_retries} attempts.")

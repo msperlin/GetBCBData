@@ -32,10 +32,14 @@ gbcbd_get_series <- function(id,
                              do.parallel = FALSE) {
 
   # verify arguments
-  args <- gbcbd_verify_args(id, first.date, last.date, format.data)
+  args <- gbcbd_verify_args(id, first.date, last.date, format.data,
+                            be.quiet, use.memoise, do.parallel)
   id <- args$id
   first.date <- args$first.date
   last.date <- args$last.date
+
+  # check for internet connection
+  gbcbd_test_internet()
 
   #set args
   my.args <- list(id = id,
@@ -63,8 +67,16 @@ gbcbd_get_series <- function(id,
   # check and change desired format output
   df.out <- gbcbd_format_output(my.l, format.data)
 
+  n_failed <- sum(vapply(my.l,
+                         function(x) isTRUE(attr(x, 'fetch_failed')),
+                         logical(1)))
+
   if (!be.quiet) {
-    cli::cli_alert_success("Finished fetching data. Total rows: {nrow(df.out)}")
+    if (n_failed > 0) {
+      cli::cli_alert_danger("Failed to fetch {n_failed}/{length(my.l)} series. Check the ids and date ranges.")
+    } else {
+      cli::cli_alert_success("Finished fetching data. Total rows: {nrow(df.out)}")
+    }
   }
 
   return(df.out)
@@ -85,20 +97,26 @@ gbcbd_get_single_series <- function(id,
                                     use.memoise = TRUE,
                                     cache.path = gbcbd_get_default_cache_folder()) {
 
-  # 20250422 - new system for diff_years > 10
+  # the BCB API blocks single requests spanning more than ~10 years
+  max_years <- 10
   diff_years <- as.numeric(last.date - first.date)/365
-  my_interval <- '3 years'
 
-  if (diff_years > 8) {
+  if (diff_years >= max_years) {
 
+    my_interval <- '3 years'
 
-    vec_dates <- c(seq(first.date, last.date,
-                       by =  my_interval),
-                   last.date)
+    # unique() avoids a zero-length period when last.date is already
+    # produced by seq() (i.e. when the span is a multiple of the interval)
+    vec_dates <- sort(unique(c(seq(first.date, last.date,
+                                   by = my_interval),
+                               last.date)))
 
-    cli::cli_alert_info("using sequential data fetching for {length(vec_dates)-1} time periods")
+    if (!be.quiet) {
+      cli::cli_alert_info("using sequential data fetching for {length(vec_dates)-1} time periods")
+    }
 
     df_all <- dplyr::tibble()
+    fetch_failed <- FALSE
     for (i_dates in seq(1:(length(vec_dates)-1))) {
 
       first_date_now <- vec_dates[i_dates]
@@ -106,6 +124,8 @@ gbcbd_get_single_series <- function(id,
 
       df_now <- query_api(id, series.name, first_date_now, last_date_now,
                       format.data,  be.quiet, use.memoise, cache.path)
+
+      if (isTRUE(attr(df_now, 'fetch_failed'))) fetch_failed <- TRUE
 
       df_all <- dplyr::bind_rows(
         df_all,
@@ -116,32 +136,44 @@ gbcbd_get_single_series <- function(id,
     # make sure it is unique (no overlaps)
     df_all <- unique(df_all)
 
+    # unique() drops custom attributes, so restore the failure flag
+    if (fetch_failed) attr(df_all, 'fetch_failed') <- TRUE
+
 
   } else {
-    cli::cli_alert_info("using single call for small query")
+    if (!be.quiet) {
+      cli::cli_alert_info("using single call for small query")
+    }
 
     df_all <- query_api(id, series.name, first.date, last.date,
                     format.data,  be.quiet, use.memoise, cache.path)
   }
 
-  n_rows <- nrow(df_all)
-  n_cols <- ncol(df_all)
-  cli::cli_alert_success("got data with {n_rows} rows and {n_cols} columns")
+  if (!be.quiet) {
+    n_rows <- nrow(df_all)
+    n_cols <- ncol(df_all)
+    cli::cli_alert_success("got data with {n_rows} rows and {n_cols} columns")
+  }
 
   return(df_all)
 }
 
 #' Verifies arguments for gbcbd_get_series
 #' @noRd
-gbcbd_verify_args <- function(id, first.date, last.date, format.data) {
+gbcbd_verify_args <- function(id, first.date, last.date, format.data,
+                              be.quiet, use.memoise, do.parallel) {
   # check if arguments make sense
-  first.date <- as.Date(first.date)
-  if (!inherits(first.date, 'Date')) {
+  if (!(is.numeric(id) || is.character(id)) || length(id) == 0) {
+    stop('Argument id should be a non-empty vector of ids (e.g. c("Selic" = 11)).')
+  }
+
+  first.date <- tryCatch(as.Date(first.date), error = function(e) as.Date(NA))
+  if (length(first.date) != 1 || anyNA(first.date)) {
     stop('Argument first.date is not a valid date!')
   }
 
-  last.date <- as.Date(last.date)
-  if (!inherits(last.date, 'Date')) {
+  last.date <- tryCatch(as.Date(last.date), error = function(e) as.Date(NA))
+  if (length(last.date) != 1 || anyNA(last.date)) {
     stop('Argument last.date is not a valid date!')
   }
 
@@ -155,8 +187,18 @@ gbcbd_verify_args <- function(id, first.date, last.date, format.data) {
 
   possible.values <- c('long', 'wide')
   if (!(format.data %in% possible.values)) {
-    stop(paste0('Input format.data should be "long" or "wide".'))
+    stop('Input format.data should be "long" or "wide".')
   }
+
+  check_logical <- function(x, arg.name) {
+    if (!is.logical(x) || length(x) != 1 || is.na(x)) {
+      stop(paste0('Argument ', arg.name, ' should be either TRUE or FALSE.'))
+    }
+  }
+
+  check_logical(be.quiet, 'be.quiet')
+  check_logical(use.memoise, 'use.memoise')
+  check_logical(do.parallel, 'do.parallel')
 
   return(list(id = id, first.date = first.date, last.date = last.date))
 }

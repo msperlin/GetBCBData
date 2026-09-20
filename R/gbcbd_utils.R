@@ -60,14 +60,3 @@ gbcbd_get_JSON_fct <- function(use.memoise = TRUE,
   return(fct_JSON)
 
 }
-
-#' Custom function for printing messages
-#'
-#' @noRd
-gbcbd_message <- function(str.in, be.quiet) {
-
-  if (!be.quiet) {
-    cli::cli_alert_info(str.in)
-  }
-
-}
