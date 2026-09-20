@@ -1,7 +1,7 @@
 Package: GetBCBData
 Type: Package
 Title: Imports Datasets from BCB (Central Bank of Brazil) using Its Official API
-Version: 0.9.3
+Version: 0.9.4
 Authors@R: person("Marcelo", "Perlin", email = "marceloperlin@gmail.com", role = c("aut", "cre"))
 Maintainer: Marcelo Perlin <marceloperlin@gmail.com>
 Description: Downloads and organizes datasets using BCB's API <https://www.bcb.gov.br/>. Offers options for caching with the 'memoise' package and
@@ -9,7 +9,7 @@ Description: Downloads and organizes datasets using BCB's API <https://www.bcb.g
 Depends:
     R (>= 3.3.0)
 Imports: curl, dplyr, future, furrr, jsonlite, memoise, purrr,
-         cli, parallelly
+         cli, parallelly, xml2
 License: GPL-2
 BugReports: https://github.com/msperlin/GetBCBData/issues
 URL: https://github.com/msperlin/GetBCBData/

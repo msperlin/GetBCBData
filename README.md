@@ -53,3 +53,18 @@ p <- ggplot(df_bcb, aes(x = ref_date, y = value) ) +
 print(p)
 ```
 
+## Searching for series ids
+
+If you don't know the id of a series, use `gbcbd_search_series()` to search the
+BCB-SGS catalog by text:
+
+```
+df_search <- gbcbd_search_series('selic')
+print(df_search)
+
+# use the first match in gbcbd_get_series()
+my_id <- df_search$id[1]
+names(my_id) <- df_search$series_name[1]
+df_bcb <- gbcbd_get_series(my_id)
+```
+

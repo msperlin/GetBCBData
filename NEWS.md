@@ -1,3 +1,9 @@
+## Version 0.9.4  (2026-09-20)
+
+- added new function gbcbd_search_series() to search the BCB-SGS catalog by text
+- added 'xml2' dependency to parse the BCB-SGS search results
+- the search supports caching (use_memoise/cache_path) and pagination (max_results)
+
 ## Version 0.9.3  (2026-09-20)
 
 - renamed function arguments and internal variables to snake_case
