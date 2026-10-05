@@ -1,3 +1,10 @@
+## Version 0.9.5  (2026-10-05)
+
+- removed the package vignette, which relied on a live call to the BCB API and
+  caused intermittent CRAN check errors ('from' must be a finite number) when
+  the service was unreachable while re-building vignettes
+- dropped 'VignetteBuilder' from DESCRIPTION accordingly
+
 ## Version 0.9.4  (2026-09-20)
 
 - added new function gbcbd_search_series() to search the BCB-SGS catalog by text

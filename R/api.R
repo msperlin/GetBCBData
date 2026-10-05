@@ -66,7 +66,7 @@ query_api <- function(id, series_name, first_date, last_date, format_data,
 
     if (!be_quiet) {
       cli::cli_alert_danger("Failed to fetch data for id={id} after {max_retries} attempts.")
-      cli::cli_alert_info("Check if the ID is correct at <http://www.bcb.gov.br/?sgs> or if the date range is valid (max 10 years for daily data).")
+      cli::cli_alert_info("Check if the ID is correct at <https://www.bcb.gov.br/?sgs> or if the date range is valid (max 10 years for daily data).")
     }
 
     return(df)

@@ -1,6 +1,6 @@
 ## Motivation
 
-The Central Bank of Brazil (BCB) offers access to its SGS system (sistema gerenciador de series temporais) with a official API available [here](http://www.bcb.gov.br/?sgs).
+The Central Bank of Brazil (BCB) offers access to its SGS system (sistema gerenciador de series temporais) with a official API available [here](https://www.bcb.gov.br/?sgs).
 
 Package GetBCBData offers a R interface to the API and many other advantages:
 
